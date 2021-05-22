@@ -54,7 +54,7 @@ public class HackerNewsSourceTask extends SourceTask {
 
     if (currentItemId > maxItemId) {
       throw new ConfigException(HackerNewsSourceConnectorConfig.INITITIAL_START_ITEM_CONFIG
-          + "is greater than the current max item id on Hacker News");
+          + " is greater than the current max item id on Hacker News (" + maxItemId + ")");
     }
   }
 
@@ -62,7 +62,7 @@ public class HackerNewsSourceTask extends SourceTask {
   public List<SourceRecord> poll() throws InterruptedException {
 
     if (config.getMaxItems() > 0 && count >= config.getMaxItems()) {
-      throw new ConnectException("Read the configured number of Hacker News items");
+      throw new ConnectException("Completed reading the configured number of Hacker News items");
     }
 
     Thread.sleep(config.getPollInterval());
