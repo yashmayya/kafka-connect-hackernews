@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.yashmayya</groupId>
+  <artifactId>kafka-connect-hacker-news</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Kafka Connect Hacker News</name>
+  <description>A connector to read data from Hacker News into Kafka</description>
+  <url>https://www.github.com/yashmayya/kafka-connect-hacker-news</url>
+
+  <licenses>
+    <license>
+      <name>DWTFPL Version 2</name>
+      <url>http://www.wtfpl.net/txt/copying/</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/yashmayya/kafka-connect-hacker-news.git</connection>
+    <developerConnection>scm:git:git@github.com:yashmayya/kafka-connect-hacker-news.git</developerConnection>
+    <url>https://github.com/yashmayya/kafka-connect-hacker-news</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>yashmayya</id>
+      <name>Yash Mayya</name>
+      <email>yash.mayya@gmail.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <kafka.version>2.8.0</kafka.version>
+    <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+    <junit.version>4.12</junit.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>connect-api</artifactId>
+      <version>${kafka.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client</artifactId>
+      <version>1.39.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.12.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>io.confluent</groupId>
+        <artifactId>kafka-connect-maven-plugin</artifactId>
+        <version>0.11.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>kafka-connect</goal>
+            </goals>
+            <configuration>
+              <title>Kafka Connect Hacker News</title>
+              <description>This source connector reads posts and comments from Hacker News and produces it to Kafka</description>
+              <ownerUsername>yashmayya</ownerUsername>
+              <ownerType>user</ownerType>
+              <ownerName>Yash Mayya</ownerName>
+
+              <componentTypes>
+                <componentType>source</componentType>
+              </componentTypes>
+
+              <confluentControlCenterIntegration>true</confluentControlCenterIntegration>
+
+              <licenses>
+                <license>
+                  <name>DWTFPL Version 2</name>
+                  <url>http://www.wtfpl.net/txt/copying/</url>
+                </license>
+              </licenses>
+
+              <tags>
+                <tag>hacker-news</tag>
+              </tags>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+  </build>
+
+</project>
