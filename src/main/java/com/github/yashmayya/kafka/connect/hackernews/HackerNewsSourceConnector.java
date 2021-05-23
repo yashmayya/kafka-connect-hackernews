@@ -32,6 +32,7 @@ public class HackerNewsSourceConnector extends SourceConnector {
       log.warn("This connector currently only supports a single task.");
     }
 
+    props.put(HackerNewsSourceTask.TASK_ID, Integer.toString(0));
     return ImmutableList.of(props);
   }
 

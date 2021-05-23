@@ -13,6 +13,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.common.config.ConfigException;
@@ -24,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 public class HackerNewsSourceTask extends SourceTask {
 
+  public static final String ITEM_ID = "item.id";
+  public static final String TASK_ID = "task.id";
+
   private static final Logger log = LoggerFactory.getLogger(HackerNewsSourceTask.class);
   private ObjectMapper objectMapper;
   private Long currentItemId;
@@ -31,6 +36,7 @@ public class HackerNewsSourceTask extends SourceTask {
   private Long maxItemId;
   private HackerNewsSourceConnectorConfig config;
   private HttpRequestFactory requestFactory;
+  private Map<String, Object> sourcePartition;
 
   @Override
   public String version() {
@@ -44,6 +50,8 @@ public class HackerNewsSourceTask extends SourceTask {
     currentItemId = config.getInitialStartItem();
     count = 0L;
     requestFactory = new NetHttpTransport().createRequestFactory();
+    int taskId = Integer.parseInt(props.get(TASK_ID));
+    sourcePartition = Collections.singletonMap(TASK_ID, taskId);
     try {
       HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(
           BASE_API_PATH + API_VERSION + MAX_ITEM_PATH));
@@ -55,6 +63,11 @@ public class HackerNewsSourceTask extends SourceTask {
     if (currentItemId > maxItemId) {
       throw new ConfigException(HackerNewsSourceConnectorConfig.INITITIAL_START_ITEM_CONFIG
           + " is greater than the current max item id on Hacker News (" + maxItemId + ")");
+    }
+
+    Map<String, Object> offset = context.offsetStorageReader().offset(sourcePartition);
+    if (offset != null) {
+      currentItemId = ((Long) offset.get(ITEM_ID)) + 1;
     }
   }
 
@@ -75,10 +88,13 @@ public class HackerNewsSourceTask extends SourceTask {
       throw new RuntimeException(e);
     }
 
+    Map<String, Object> sourceOffset = new HashMap<>();
+    sourceOffset.put(ITEM_ID, currentItemId);
+
     List<SourceRecord> records = new ArrayList<>();
     SourceRecord record = new SourceRecord(
-        null,
-        null,
+        sourcePartition,
+        sourceOffset,
         config.getKafkaTopic(),
         null,
         hnItem
