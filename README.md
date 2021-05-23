@@ -41,6 +41,6 @@ An example config for this connector :-
 ## TODO
 
 - [ ] Add unit tests
-- [ ] Implement offset tracking and recovery
+- [X] ~~Implement offset tracking and recovery~~
 - [ ] Support dynamic reloading of [max item id](https://github.com/HackerNews/API#max-item-id) so that the connector can run forever
 - [ ] Add support for schemas
