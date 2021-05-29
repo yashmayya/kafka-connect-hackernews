@@ -1,13 +1,14 @@
 package com.github.yashmayya.kafka.connect.hackernews;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
-import java.util.Map;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 public class HackerNewsSourceConnector extends SourceConnector {
 

@@ -1,22 +1,10 @@
 package com.github.yashmayya.kafka.connect.hackernews;
 
-import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.API_VERSION;
-import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.BASE_API_PATH;
-import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.MAX_ITEM_PATH;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -24,11 +12,16 @@ import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+
+import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.*;
+
 public class HackerNewsSourceTask extends SourceTask {
 
   public static final String ITEM_ID = "item.id";
   public static final String TASK_ID = "task.id";
-
   private static final Logger log = LoggerFactory.getLogger(HackerNewsSourceTask.class);
   private ObjectMapper objectMapper;
   private Long currentItemId;
@@ -73,17 +66,17 @@ public class HackerNewsSourceTask extends SourceTask {
 
   @Override
   public List<SourceRecord> poll() throws InterruptedException {
-
     if (config.getMaxItems() > 0 && count >= config.getMaxItems()) {
       throw new ConnectException("Completed reading the configured number of Hacker News items");
     }
 
     Thread.sleep(config.getPollInterval());
-    Map<String, Object> hnItem;
+
+    HackerNewsItem hnItem;
     try {
       hnItem = objectMapper.readValue(new URL(
           BASE_API_PATH + API_VERSION + String.format("/item/%s.json", currentItemId)),
-          new TypeReference<Map<String,Object>>(){});
+          HackerNewsItem.class);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -96,8 +89,8 @@ public class HackerNewsSourceTask extends SourceTask {
         sourcePartition,
         sourceOffset,
         config.getKafkaTopic(),
-        null,
-        hnItem
+        HackerNewsItem.VALUE_SCHEMA,
+        hnItem.toStruct()
     );
     records.add(record);
     count++;
