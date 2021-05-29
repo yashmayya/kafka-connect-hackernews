@@ -1,9 +1,6 @@
 package com.github.yashmayya.kafka.connect.hackernews;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.errors.ConnectException;
@@ -16,7 +13,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.*;
+import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.API_VERSION;
+import static com.github.yashmayya.kafka.connect.hackernews.HackerNewsSourceConnectorConfig.BASE_API_PATH;
 
 public class HackerNewsSourceTask extends SourceTask {
 
@@ -28,7 +26,6 @@ public class HackerNewsSourceTask extends SourceTask {
   private Long count;
   private Long maxItemId;
   private HackerNewsSourceConnectorConfig config;
-  private HttpRequestFactory requestFactory;
   private Map<String, Object> sourcePartition;
 
   @Override
@@ -42,16 +39,9 @@ public class HackerNewsSourceTask extends SourceTask {
     objectMapper = new ObjectMapper();
     currentItemId = config.getInitialStartItem();
     count = 0L;
-    requestFactory = new NetHttpTransport().createRequestFactory();
     int taskId = Integer.parseInt(props.get(TASK_ID));
     sourcePartition = Collections.singletonMap(TASK_ID, taskId);
-    try {
-      HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(
-          BASE_API_PATH + API_VERSION + MAX_ITEM_PATH));
-      maxItemId = Long.parseLong(request.execute().parseAsString().trim());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    maxItemId = HackerNewsUtil.getMaxItemId();
 
     if (currentItemId > maxItemId) {
       throw new ConfigException(HackerNewsSourceConnectorConfig.INITITIAL_START_ITEM_CONFIG
@@ -70,7 +60,14 @@ public class HackerNewsSourceTask extends SourceTask {
       throw new ConnectException("Completed reading the configured number of Hacker News items");
     }
 
+    List<SourceRecord> records = new ArrayList<>();
     Thread.sleep(config.getPollInterval());
+
+    if (currentItemId > maxItemId) {
+      maxItemId = HackerNewsUtil.getMaxItemId();
+      log.info("Got max item id = {}", maxItemId);
+      return records;
+    }
 
     HackerNewsItem hnItem;
     try {
@@ -81,10 +78,13 @@ public class HackerNewsSourceTask extends SourceTask {
       throw new RuntimeException(e);
     }
 
+    if (hnItem == null) {
+      return records;
+    }
+
     Map<String, Object> sourceOffset = new HashMap<>();
     sourceOffset.put(ITEM_ID, currentItemId);
 
-    List<SourceRecord> records = new ArrayList<>();
     SourceRecord record = new SourceRecord(
         sourcePartition,
         sourceOffset,
