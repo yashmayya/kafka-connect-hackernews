@@ -4,7 +4,7 @@
 
   <groupId>com.github.yashmayya</groupId>
   <artifactId>kafka-connect-hacker-news</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Kafka Connect Hacker News</name>
   <description>A connector to read data from Hacker News into Kafka</description>
@@ -21,7 +21,7 @@
     <connection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</connection>
     <developerConnection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</developerConnection>
     <url>https://github.com/yashmayya/kafka-connect-hackernews</url>
-    <tag>0.1.x</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
