@@ -18,9 +18,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/yashmayya/kafka-connect-hacker-news.git</connection>
-    <developerConnection>scm:git:git@github.com:yashmayya/kafka-connect-hacker-news.git</developerConnection>
-    <url>https://github.com/yashmayya/kafka-connect-hacker-news</url>
+    <connection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</connection>
+    <developerConnection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</developerConnection>
+    <url>https://github.com/yashmayya/kafka-connect-hackernews</url>
     <tag>HEAD</tag>
   </scm>
 
