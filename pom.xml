@@ -21,7 +21,7 @@
     <connection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</connection>
     <developerConnection>scm:git:git@github.com:yashmayya/kafka-connect-hackernews.git</developerConnection>
     <url>https://github.com/yashmayya/kafka-connect-hackernews</url>
-    <tag>HEAD</tag>
+    <tag>0.1.x</tag>
   </scm>
 
   <developers>
