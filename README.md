@@ -3,12 +3,12 @@ A Kafka Connector to read items from Hacker News and stream it into Kafka. Becau
 
 ## Overview
 
-This source connector reads items (stories, comments, jobs, Ask HNs, polls) from Hacker News via https://github.com/HackerNews/API. Currently, only a single connector task is supported.
+This source connector reads items (stories, comments, jobs, Ask HNs, polls) from Hacker News via https://github.com/HackerNews/API. Items are read serially starting from `initial.start.item` (defaults to 1). Currently, only a single connector task is supported.
 
 
 ## Installation
 
-Run `mvn clean package` from the repo's root and then unzip and copy the zip archive created in `target/components/packages/` to any directory on your [Connect worker's plugin path.](https://docs.confluent.io/home/connect/userguide.html#installing-kconnect-plugins)
+Run `mvn clean package` from the repo's root and then copy and unzip the zip archive created in `target/components/packages/` to any directory on your [Connect worker's plugin path.](https://docs.confluent.io/home/connect/userguide.html#installing-kconnect-plugins)
 
 
 ## Configuration
@@ -22,7 +22,6 @@ These are the supported configs :-
 |`initial.start.item`| Hacker News item id to start reading from | Long | Medium |
 |`max.items`| Maximum number of items to read from Hacker News or less than 1 for unlimited | Long | Medium|
 
-Currently, this connector only supports StringConverter (`org.apache.kafka.connect.storage.StringConverter`) and JsonConverter (`org.apache.kafka.connect.json.JsonConverter`) without embedded schemas.
 
 An example config for this connector :-
 
