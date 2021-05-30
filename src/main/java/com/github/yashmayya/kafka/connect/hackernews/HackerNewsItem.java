@@ -12,7 +12,7 @@ public class HackerNewsItem {
             .field("id", Schema.INT64_SCHEMA)
             .field("deleted", Schema.OPTIONAL_BOOLEAN_SCHEMA)
             .field("type", Schema.STRING_SCHEMA)
-            .field("by", Schema.STRING_SCHEMA)
+            .field("by", Schema.OPTIONAL_STRING_SCHEMA)
             .field("time", Schema.INT64_SCHEMA)
             .field("text", Schema.OPTIONAL_STRING_SCHEMA)
             .field("dead", Schema.OPTIONAL_BOOLEAN_SCHEMA)
